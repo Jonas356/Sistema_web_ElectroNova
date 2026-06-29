@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row mb-4 g-4">
+    <div class="col-xl-4 col-lg-5">
+        <div class="cleo-card position-relative overflow-hidden h-100 d-flex flex-column justify-content-between" style="background: linear-gradient(135deg, #ffffff 0%, #f1fdfb 100%); min-height: 280px;">
+            <div>
+                <h4 class="fw-bold text-dark mb-1">¡Bienvenido {{ current_user.username }}!</h4>
+                <p class="text-muted small mb-4">rendimiento operativo del mes</p>
+            </div>
+            
+            <div>
+                <span class="text-uppercase fw-bold text-muted d-block" style="font-size: 0.75rem; letter-spacing: 0.5px;">Balance en Caja</span>
+                <h1 class="fw-bold mb-1" style="color: var(--cleo-primary); font-size: 2.5rem;">{{ total_ingresos if total_ingresos else 0 }} <span style="font-size: 1.2rem;">Bs.</span></h1>
+                <p class="text-muted small mb-0"><i class="bi bi-arrow-up-short text-success"></i> Panel Activo hoy</p>
+            </div>
+            
+            <div>
+                <a href="{{ url_for('ventas.create') }}" class="btn btn-cleo-primary w-100 py-2 mt-2">Generar Nueva Venta</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-5 col-lg-7">
+        <div class="cleo-card h-100 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Gráfico de Ventas</h5>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-secondary active" style="font-size: 0.8rem; border-color: #e2e8f0;">Mes</button>
+                    <button class="btn btn-outline-secondary" style="font-size: 0.8rem; border-color: #e2e8f0;">Semana</button>
+                </div>
+            </div>
+
+            <div class="position-relative w-100 flex-grow-1" style="height: 180px;">
+                <canvas id="cleopatraChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-12">
+        <div class="cleo-card h-100">
+            <h5 class="fw-bold mb-3" style="font-size: 1rem;">Catálogo de Productos</h5>
+            <div class="d-flex flex-column gap-3">
+                {% for p in ultimos_productos %}
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold text-dark" style="font-size: 0.88rem;">{{ p.nombre }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Stock: {{ p.stock }} u.</div>
+                    </div>
+                    <span class="fw-bold small text-success">+ {{ p.precio }} Bs.</span>
+                </div>
+                {% else %}
+                <div class="text-center text-muted small py-4">Sin lanzamientos recientes.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4 g-4">
+    <div class="col-md-4">
+        <div class="cleo-card text-center py-4">
+            <span class="text-uppercase fw-bold tracking-wider" style="font-size: 0.75rem; color: var(--cleo-text-muted);">Transacciones Totales</span>
+            <h2 class="fw-bold my-2" style="font-size: 2.2rem;">{{ total_ventas }}</h2>
+            <p class="text-muted small mb-0"><i class="bi bi-shield-check text-success"></i> Transacciones verificadas</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="cleo-card text-center py-4">
+            <span class="text-uppercase fw-bold tracking-wider" style="font-size: 0.75rem; color: var(--cleo-text-muted);">Clientes Frecuentes</span>
+            <h2 class="fw-bold my-2" style="font-size: 2.2rem;">{{ total_clientes }}</h2>
+            <a href="{{ url_for('clientes.index') }}" class="text-decoration-none small" style="color: var(--cleo-primary); font-weight: 500;">Ver Directorio →</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="cleo-card text-center py-4" style="border-left: 4px solid #ff4a5a;">
+            <span class="text-uppercase fw-bold tracking-wider" style="font-size: 0.75rem; color: #ff4a5a;">Bajo Stock Alertas</span>
+            <h2 class="fw-bold my-2 text-danger" style="font-size: 2.2rem;">{{ productos_bajo_stock }}</h2>
+            <a href="{{ url_for('inventario.index') }}" class="btn btn-sm py-0 text-danger fw-semibold text-decoration-none small">Reabastecer →</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Últimos Movimientos de Registro</h5>
+            <a href="{{ url_for('ventas.index') }}" class="btn btn-sm btn-light px-3 fw-medium" style="border-radius: 8px; border: 1px solid #e2e8f0;">Ver Todo</a>
+        </div>
+        
+        <div class="cleo-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                    <thead style="background-color: #fafbfc; border-bottom: 1px solid #edf2f7;">
+                        <tr>
+                            <th class="ps-4 py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase;">ID Venta</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase;">Cliente</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase;">Fecha de Transacción</th>
+                            <th class="pe-4 py-3 text-end text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase;">Monto Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in ultimas_ventas %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td class="ps-4 text-muted">#000{{ v.id }}</td>
+                            <td>
+                                <span class="fw-semibold text-dark">{{ v.cliente_rel.nombre }}</span>
+                                <span class="text-muted small d-block" style="font-size: 0.75rem;">CI: {{ v.cliente_rel.nit_ci }}</span>
+                            </td>
+                            <td class="text-secondary">{{ v.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td class="pe-4 text-end fw-bold" style="color: var(--cleo-primary);">{{ v.total }} Bs.</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No se han registrado operaciones de venta el día de hoy.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('cleopatraChart').getContext('2d');
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, 160);
+        gradient.addColorStop(0, 'rgba(48, 209, 190, 0.4)');
+        gradient.addColorStop(1, 'rgba(48, 209, 190, 0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                datasets: [{
+                    label: 'Flujo de Órdenes',
+                    data: [12, 19, 10, 25, 14, 22, 30], 
+                    borderColor: '#30D1BE',
+                    borderWidth: 3,
+                    fill: true,
+                    backgroundColor: gradient,
+                    tension: 0.4, 
+                    pointRadius: 0,
+                    pointHoverRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#8a99ad', font: { size: 10 } } },
+                    y: { display: false, grid: { display: false } } 
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

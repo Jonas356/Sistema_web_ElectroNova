@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1 text-dark">Directorio de Clientes</h4>
+        <p class="text-muted small mb-0">Gestión de datos</p>
+    </div>
+    <a href="{{ url_for('clientes.create') }}" class="btn btn-cleo-outline">Registrar Cliente</a>
+</div>
+
+<div class="cleo-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" style="font-size: 0.92rem;">
+            <thead style="background-color: #fafbfc; border-bottom: 1px solid #edf2f7;">
+                <tr>
+                    <th class="ps-4 py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">ID</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Nombre</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">CI</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Telefono</th>
+                    <th class="pe-4 py-3 text-end text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in clientes %}
+                <tr>
+                    <td class="ps-4 text-muted fw-medium">#CL-{{ c.id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                {{ c.nombre[:2]|upper }}
+                            </div>
+                            <span class="fw-semibold text-dark">{{ c.nombre }}</span>
+                        </div>
+                    </td>
+                    <td><span class="badge bg-light text-dark px-2.5 py-2" style="font-weight: 500; border-radius: 6px; border: 1px solid #edf2f7;">{{ c.nit_ci }}</span></td>
+                    <td class="text-muted">{{ c.telefono if c.telefono else '—' }}</td>
+                    
+                    <td class="pe-4 text-end">
+                        <a href="{{ url_for('clientes.edit', id=c.id) }}" class="btn btn-sm btn-light text-primary me-1" title="Editar Cliente" style="border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        
+                        {% if current_user.rol == 'Administrador' %}
+                        <form action="{{ url_for('clientes.delete_cliente', id=c.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar permanentemente a este cliente?');">
+                            <button type="submit" class="btn btn-sm btn-light text-danger" title="Eliminar Cliente" style="border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-5">
+                        <i class="bi bi-people display-6 opacity-25 d-block mb-2"></i>
+                        No existen clientes
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-3">
+    <div class="col-lg-6">
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <a href="{{ url_for('auth.usuarios_index') }}" class="btn btn-light rounded-circle p-2 d-inline-flex text-muted" style="border: 1px solid #e2e8f0;">
+                <i class="bi bi-arrow-left fs-5"></i>
+            </a>
+            <div>
+                <h4 class="fw-bold mb-0 text-dark">Registrar Nuevo Usuario</h4>
+                <p class="text-muted small mb-0">Registra y asigna un rol</p>
+            </div>
+        </div>
+
+        <div class="cleo-card p-4 p-sm-5">
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">Nombre de Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px;"><i class="bi bi-person"></i></span>
+                        <input type="text" name="username" class="form-control border-start-0" required placeholder="Ej. admin" style="border-radius: 0 10px 10px 0;">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px;"><i class="bi bi-lock"></i></span>
+                        <input type="password" name="password" class="form-control border-start-0" required placeholder="******" style="border-radius: 0 10px 10px 0;">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold small text-muted">Rol Asignado en el Sistema</label>
+                    <select name="rol" class="form-select">
+                        <option value="Administrador">Administrador</option>
+                        <option value="Vendedor" selected>Vendedor</option>
+                    </select>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-3 border-top pt-3">
+                    <a href="{{ url_for('auth.usuarios_index') }}" class="btn btn-light px-4" style="border-radius: 10px; font-weight: 600; border: 1px solid #e2e8f0;">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-cleo-primary px-4">
+                        Crear Cuenta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

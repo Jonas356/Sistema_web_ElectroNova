@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row justify-content-center mt-3">
+    <div class="col-lg-7">
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <a href="{{ url_for('clientes.index') }}" class="btn btn-light rounded-circle p-2 d-inline-flex text-muted" style="border: 1px solid #e2e8f0;">
+                <i class="bi bi-arrow-left fs-5"></i>
+            </a>
+            <div>
+                <h4 class="fw-bold mb-0 text-dark">Alta de Clientes</h4>
+                <p class="text-muted small mb-0">Completa los campos para registrar un nuevo cliente recurrente</p>
+            </div>
+        </div>
+
+        <div class="cleo-card">
+            <form method="POST" action="{{ url_for('clientes.create') }}">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">Nombre Completo</label>
+                    <input type="text" name="nombre" class="form-control" required placeholder="Ej. Juan">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">Cedula de Identidad</label>
+                    <input type="text" name="nit_ci" class="form-control" required placeholder="Ej. 11111111">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold small text-muted">Telefono</label>
+                    <input type="text" name="telefono" class="form-control" placeholder="Ej. 122222222">
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 border-top pt-3">
+                    <a href="{{ url_for('clientes.index') }}" class="btn btn-light px-4" style="border-radius: 10px; font-weight: 600; border: 1px solid #e2e8f0;">
+                        Volver
+                    </a>
+                    <button type="submit" class="btn btn-cleo-primary px-4">
+                        Registrar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

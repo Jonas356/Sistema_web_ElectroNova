@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroNova - Gestión Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cleo-bg: #f4f7fe;
+            --cleo-sidebar-bg: #ffffff;
+            --cleo-primary: #30D1BE;
+            --cleo-primary-hover: #26b3a3;
+            --cleo-text-dark: #1e293b;
+            --cleo-text-muted: #8a99ad;
+            --cleo-card-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        body {
+            background-color: var(--cleo-bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--cleo-text-dark);
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--cleo-sidebar-bg);
+            border-right: 1px solid rgba(0,0,0,0.04);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--cleo-text-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .menu-category {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--cleo-text-muted);
+            font-weight: 700;
+            margin-top: 22px;
+            margin-bottom: 8px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+
+        .nav-menu-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: var(--cleo-text-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-menu-link:hover, .nav-menu-link.active {
+            background-color: rgba(48, 209, 190, 0.08);
+            color: var(--cleo-primary);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content.authenticated {
+            margin-left: 260px;
+            padding: 40px;
+        }
+
+        .main-content.guest {
+            margin-left: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f4f7fe 0%, #eef2f9 100%);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .cleo-card {
+            background: #ffffff;
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--cleo-card-shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .btn-cleo-primary {
+            background-color: var(--cleo-primary);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+        }
+
+        .btn-cleo-primary:hover {
+            background-color: var(--cleo-primary-hover);
+            color: #ffffff;
+        }
+
+        .btn-cleo-outline {
+            background-color: transparent;
+            color: var(--cleo-primary);
+            border: 2px solid var(--cleo-primary);
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-cleo-outline:hover {
+            background-color: var(--cleo-primary);
+            color: #ffffff;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--cleo-primary);
+            box-shadow: 0 0 0 3px rgba(48, 209, 190, 0.15);
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        {% if current_user.is_authenticated %}
+            <aside class="sidebar">
+                <a href="{{ url_for('core.dashboard') }}" class="brand-logo">
+                    <i class="bi bi-lightning-charge-fill" style="color: var(--cleo-primary);"></i> ElectroNova
+                </a>
+
+                <div class="menu-category">Inicio</div>
+                <ul class="nav-menu">
+                    <li class="nav-menu-item">
+                        <a href="{{ url_for('core.dashboard') }}" class="nav-menu-link">
+                            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="menu-category">Inventario</div>
+                <ul class="nav-menu">
+                    <li class="nav-menu-item">
+                        <a href="{{ url_for('inventario.index') }}" class="nav-menu-link">
+                            <i class="bi bi-box-seam"></i> Catálogo Inventario
+                        </a>
+                    </li>
+                    <li class="nav-menu-item">
+                        <a href="{{ url_for('clientes.index') }}" class="nav-menu-link">
+                            <i class="bi bi-people"></i> Directorio Clientes
+                        </a>
+                    </li>
+                    <li class="nav-menu-item">
+                        <a href="{{ url_for('ventas.index') }}" class="nav-menu-link">
+                            <i class="bi bi-cart-check"></i> Registro de Ventas
+                        </a>
+                    </li>
+                </ul>
+
+                {% if current_user.rol == 'Administrador' %}
+                <div class="menu-category">Administración</div>
+                <ul class="nav-menu">
+                    <li class="nav-menu-item">
+                        <a href="{{ url_for('auth.usuarios_index') }}" class="nav-menu-link">
+                            <i class="bi bi-person-gear"></i> Gestión Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-menu-item">
+                        <a href="{{ url_for('inventario.proveedores') }}" class="nav-menu-link">
+                            <i class="bi bi-building-up"></i> Proveedores Mabe
+                        </a>
+                    </li>
+                    <li class="nav-menu-item">
+                        <a href="{{ url_for('core.reportes') }}" class="nav-menu-link">
+                            <i class="bi bi-file-bar-graph"></i> Reportes ERP
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
+            </aside>
+        {% endif %}
+
+        <main class="main-content {% if current_user.is_authenticated %}authenticated{% else %}guest{% endif %}">
+
+            {% if current_user.is_authenticated %}
+                <header class="top-bar">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-muted" style="font-size: 0.85rem;">Ecosistema Operativo Integral</h5>
+                    </div>
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="text-muted d-flex gap-3 fs-5">
+                            <i class="bi bi-envelope" style="cursor: pointer;"></i>
+                            <i class="bi bi-chat-left-text" style="cursor: pointer;"></i>
+                            <i class="bi bi-bell" style="cursor: pointer;"></i>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="text-end">
+                                <span class="fw-semibold text-dark d-block" style="font-size: 0.9rem; line-height: 1;">{{ current_user.username }}</span>
+                                <small class="text-muted" style="font-size: 0.72rem;">{{ current_user.rol }}</small>
+                            </div>
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <a href="{{ url_for('auth.logout') }}" class="text-danger ms-2 fs-5" title="Cerrar Sesión">
+                                <i class="bi bi-power"></i>
+                            </a>
+                        </div>
+                    </div>
+                </header>
+            {% endif %}
+
+            <div class="{% if current_user.is_authenticated %}{% else %}container mt-4 position-absolute top-0 start-50 translate-middle-x{% endif %}" style="z-index: 1050; max-width: 500px;">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: 12px;">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            {% block content %}{% endblock %}
+            
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row justify-content-center mt-3">
+    <div class="col-lg-8">
+        <div class="cleo-card p-4 p-md-5 position-relative overflow-hidden">
+            <div class="position-absolute top-0 start-0 w-100" style="height: 6px; background-color: var(--cleo-primary);"></div>
+            
+            <div class="text-center mb-5 mt-2">
+                <h3 class="fw-bold text-dark mb-1">Tienda ElectroNova</h3>
+                <p class="text-muted small mb-0">Gestión Tecnológica Eficiente</p>
+                <p class="text-muted small mb-3">La Paz — Bolivia</p>
+                <span class="badge bg-light text-dark border px-3 py-2 fw-semibold" style="border-radius: 20px; letter-spacing: 0.5px;">
+                    RECIBO DE VENTA PRINCIPAL
+                </span>
+            </div>
+            
+            <div class="row mb-4 g-3" style="font-size: 0.9rem;">
+                <div class="col-sm-6">
+                    <div class="text-muted mb-1">Detalles del Comprobante</div>
+                    <div class="fw-bold text-dark">Nro. Control: <span class="text-secondary">#000{{ venta.id }}</span></div>
+                    <div class="text-secondary">Fecha Emisión: {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</div>
+                </div>
+                <div class="col-sm-6 text-sm-end">
+                    <div class="text-muted mb-1">Datos del Cliente</div>
+                    <div class="fw-bold text-dark">{{ venta.cliente_rel.nombre }}</div>
+                    <div class="text-secondary">CI: {{ venta.cliente_rel.nit_ci }}</div>
+                </div>
+            </div>
+
+            <div class="table-responsive my-4">
+                <table class="table align-middle" style="font-size: 0.92rem;">
+                    <thead style="background-color: #fafbfc; border-bottom: 1px solid #edf2f7;">
+                        <tr>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Descripción Artículo</th>
+                            <th class="py-3 text-center text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Cantidad</th>
+                            <th class="py-3 text-end text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Precio Unitario</th>
+                            <th class="py-3 text-end text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in venta.detalles %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td class="fw-semibold text-dark">{{ d.producto_rel.nombre }}</td>
+                            <td class="text-center text-secondary">{{ d.cantidad }} u.</td>
+                            <td class="text-end text-secondary">{{ d.precio_unitario }} Bs.</td>
+                            <td class="text-end fw-medium text-dark">{{ d.cantidad * d.precio_unitario }} Bs.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex flex-column align-items-end mt-4">
+                <div class="p-3 bg-light rounded-3 text-end" style="min-width: 240px; border: 1px solid #edf2f7;">
+                    <span class="text-muted small text-uppercase fw-bold block" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total Pagado</span>
+                    <h3 class="fw-bold mb-0 mt-1" style="color: var(--cleo-primary);">{{ venta.total }} Bs.</h3>
+                </div>
+            </div>
+
+            <div class="mt-5 text-center border-top pt-4">
+                <a href="{{ url_for('ventas.index') }}" class="btn btn-light px-4 text-secondary fw-semibold" style="border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al Historial
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

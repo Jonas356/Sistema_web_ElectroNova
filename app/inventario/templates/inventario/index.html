@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1 text-dark">Catalogo e Inventario</h4>
+        <p class="text-muted small mb-0">Control de stock en tiempo real del almacén</p>
+    </div>
+    {% if current_user.rol == 'Administrador' %}
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('inventario.create_categoria') }}" class="btn btn-light text-secondary fw-semibold px-3" style="border-radius: 10px; border: 1px solid #e2e8f0;">
+            <i class="bi bi-tags-fill me-1" style="color: var(--cleo-primary);"></i> Nueva Categoría
+        </a>
+        <a href="{{ url_for('inventario.create') }}" class="btn btn-cleo-outline"> Registrar Producto</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="cleo-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" style="font-size: 0.92rem;">
+            <thead style="background-color: #fafbfc; border-bottom: 1px solid #edf2f7;">
+                <tr>
+                    <th class="ps-4 py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">ID</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Electrodoméstico</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Categoría</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Precio</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Stock</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Estado</th>
+                    <th class="pe-4 py-3 text-end text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in productos %}
+                <tr>
+                    <td class="ps-4 text-muted fw-medium">#EP-{{ prod.id }}</td>
+                    <td>
+                        <span class="fw-semibold text-dark d-block">{{ prod.nombre }}</span>
+                        <small class="text-muted text-truncate d-inline-block" style="max-width: 220px;">{{ prod.descripcion if prod.descripcion else 'Sin descripción técnica' }}</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark px-2.5 py-1.5 fw-medium" style="border-radius: 6px; border: 1px solid #e9ecef;">
+                            {{ prod.categoria_rel.nombre if prod.categoria_rel else 'General' }}
+                        </span>
+                    </td>
+                    <td class="fw-semibold text-dark">{{ prod.precio }} Bs.</td>
+                    <td class="fw-bold {% if prod.stock <= 4 %}text-danger{% else %}text-dark{% endif %}">{{ prod.stock }} u.</td>
+                    <td>
+                        {% if prod.stock <= 4 %}
+                            <span class="text-danger fw-semibold small d-inline-flex align-items-center gap-1">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Stock Crítico
+                            </span>
+                        {% else %}
+                            <span class="text-success fw-medium small d-inline-flex align-items-center gap-1">
+                                <i class="bi bi-check-circle-fill"></i> Disponible
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="pe-4 text-end">
+                        {% if current_user.rol == 'Administrador' %}
+                            <a href="{{ url_for('inventario.edit', id=prod.id) }}" class="btn btn-sm btn-light text-primary me-1" title="Editar Producto" style="border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form action="{{ url_for('inventario.delete', id=prod.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto del inventario de forma permanente?');">
+                                <button type="submit" class="btn btn-sm btn-light text-danger" title="Eliminar Producto" style="border-radius: 8px; border: 1px solid #e2e8f0;">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="badge bg-light text-muted px-3 py-2" style="border-radius: 8px; font-size: 0.78rem;"> Lectura</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-5">
+                        <i class="bi bi-box-seam display-6 opacity-25 d-block mb-2"></i>
+                        No hay electrodomésticos registrados en la base de datos.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

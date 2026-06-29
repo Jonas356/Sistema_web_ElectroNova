@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1 text-dark">Proveedores</h4>
+        <p class="text-muted small mb-0">Gestión de abastecimiento, importadores y contactos</p>
+    </div>
+    <button type="button" class="btn btn-cleo-outline" data-bs-toggle="modal" data-bs-target="#modalProveedor">
+        Registrar Proveedor
+    </button>
+</div>
+
+<div class="cleo-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" style="font-size: 0.92rem;">
+            <thead style="background-color: #fafbfc; border-bottom: 1px solid #edf2f7;">
+                <tr>
+                    <th class="ps-4 py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">ID</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Empresa</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Contacto</th>
+                    <th class="py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Teléfono</th>
+                    <th class="pe-4 py-3 text-muted fw-semibold" style="font-size: 0.8rem; text-transform: uppercase;">Ubicación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in proveedores %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td class="ps-4 text-muted">#{{ p.id }}</td>
+                    <td class="fw-bold text-dark">{{ p.nombre }}</td>
+                    <td class="text-secondary">{{ p.contacto if p.contacto else '—' }}</td>
+                    <td class="fw-medium text-dark">{{ p.telefono }}</td>
+                    <td class="pe-4 text-muted small">{{ p.direccion if p.direccion else '—' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-5">
+                        <i class="bi bi-building display-6 opacity-25 d-block mb-2"></i>
+                        No hay empresas proveedoras
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalProveedor" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h5 class="fw-bold text-dark">Registrar Proveedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="POST" action="{{ url_for('inventario.create_proveedor') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Empresa</label>
+                        <input type="text" name="nombre" class="form-control" placeholder="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Nombre del Asesor</label>
+                        <input type="text" name="contacto" class="form-control" placeholder="ej">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Teléfono</label>
+                        <input type="text" name="telefono" class="form-control" placeholder="11111" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-muted">Dirección de Almacén</label>
+                        <input type="text" name="direccion" class="form-control" placeholder="Av. 1">
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 10px; font-weight:600;">Cerrar</button>
+                        <button type="submit" class="btn btn-cleo-primary">Guardar </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
